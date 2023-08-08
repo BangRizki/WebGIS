@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing Dijkstra, bismillah lulus tahun ini ya Allah</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    #map {
+      height: 500px;
+    }
+    .leaflet-tooltip{
+      width: 10px;
+      margin-left: 15px;
+      padding-bottom: 50px;
+      background-color: none ;
+      color: rgb(53, 53, 53);
+      box-shadow: none;
+      background: none;
+      border: none;
+      font-size: 16px;
+      font-weight: bold;
+      overflow-anchor: auto;
+    }
+    .leaflet-tooltip-container {
+      display: none;
+    }  
+  </style>
+</head>
+<body>
+  <div class="container mx-auto grid grid-cols-3 gap-4">
+    <div class="col-span-1">
+      <h1 class="text-2xl font-bold my-4">Testing Dijkstra</h1>
+      <div class="flex my-3">
+        <div class="w-24">
+          <label class="block mb-2 w-36 text-sm font-medium text-gray-900" for="source">Node Awal:</label>
+          <select multiple id="source" size="2" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+          </select>
+        </div>
+        <div class="w-24 mx-2">
+          <label class="block mb-2 w-36 text-sm font-medium text-gray-900" for="destination">Node Tujuan:</label>
+          <select multiple id="destination" size="2" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+          </select>
+        </div>
+      </div>
+      <div class="w-48 flex items-end">
+        <button onclick="calculateShortestPath()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mb-4 rounded-lg">Hitung Jalur Terpendek</button>
+      </div>
+      <div class="font-bold font-sans" id="result" style="display: none;">
+        <h3 class="text-2xl mb-2"> Hasil </h3>
+        <p id="totalDistance"></p>
+        <p id="path"></p>
+        <p id="visited"></p>
+      </div>
+    </div>
+    <div class="col-span-2 mt-6 ml-6 rounded-lg" id="map"></div>
+  </div>
+  
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Algoritma Dijkstra
+    class Graph {
+      constructor() {
+        this.nodes = [];
+        this.edges = {};
+      }
+
+      addNode(node) {
+        this.nodes.push(node);
+        this.edges[node] = {};
+      }
+
+      addEdge(source, destination, weight) {
+        this.edges[source][destination] = weight;
+        // this.edges[destination][source] = weight; //kalo di komen graf berarahnya idup kalo ngga ya ngga idup lah wkwk
+      }
+
+      dijkstra(startNode) {
+        // Membuat objek untuk menyimpan jarak terpendek ke setiap node
+        const distances = {};
+        this.nodes.forEach((node) => {
+          distances[node] = Infinity;
+        });
+        distances[startNode] = 0;
+
+        // Membuat objek untuk menyimpan node sebelumnya dalam jalur terpendek
+        const previousNodes = {};
+
+        // Membuat set untuk menyimpan node yang telah dikunjungi
+        const visited = new Set();
+
+        // Fungsi untuk mencari node dengan jarak terpendek
+        function findSmallestDistanceNode() {
+          let smallestDistance = Infinity;
+          let smallestNode = null;
+          for (const node in distances) {
+            if (!visited.has(node) && distances[node] <= smallestDistance) {
+              smallestDistance = distances[node];
+              smallestNode = node;
+            }
+          }
+          return smallestNode;
+        }
+
+        let currentNode = findSmallestDistanceNode();
+        console.log("titik awal: " + currentNode); //titik awal
+        while (currentNode) {
+          const currentDistance = distances[currentNode]; //jarak node yang sudah dilalui/dicek
+          const neighbors = this.edges[currentNode];
+          console.log("Pengecekan dari node " + currentNode); 
+          for (const neighbor in neighbors) {
+            const distance = currentDistance + neighbors[neighbor];
+            if (distance < distances[neighbor]) {
+              distances[neighbor] = distance;
+              previousNodes[neighbor] = currentNode; //node saat ini yg sedang dikunjungi atau mencari rute terdekat melalui node lain yang saling berhubungan dengan node saat ini
+            } 
+            console.log("cek jarak dengan tetangga " + currentDistance + " + " + neighbors[neighbor] + " = " + distance);
+            // console.log(neighbors); 
+          }
+          visited.add(currentNode);
+          console.log(visited);
+          console.log("Node saat ini adalah: ", currentNode, " dengan bobot: ",currentDistance, " node yang bertetanggaan: ", neighbors);
+          currentNode = findSmallestDistanceNode();
+        }
+        return { distances, previousNodes };
+      }
+    }
+   
+    // Integrasi Leaflet JS
+    let map = null;
+    let graph = null;
+    
+    map = L.map('map').setView([-6.916503, 107.610026], 13);
+
+    L.tileLayer('https://api.mapbox.com/styles/v1/rizkioktav/cldh4fpel000n01lfmim21k0i/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoicml6a2lva3RhdiIsImEiOiJjbGN5d2dkaG8wMXRtM3NwaGMzOXRuZXk1In0.bYw3duKyb8ESXzcOYzhPfg', {
+      attribution: '&copy; Mapbox contributors'
+    }).addTo(map);
+
+    // Menambahkan marker ke peta
+    const markers = [
+      { position: [-6.898649,107.612479], label: 'A' },
+      { position: [-6.900398,107.609317], label: 'B' },
+      { position: [-6.90697,107.610454], label: 'C' },
+      { position: [-6.905521,107.60774], label: 'D' },
+      { position: [-6.906448,107.597537], label: 'E' },
+      { position: [-6.912594,107.603964], label: 'F' },
+      { position: [-6.916503,107.610026], label: 'G' },
+      { position: [-6.915843,107.60449], label: 'H' },
+      { position: [-6.920806,107.604093], label: 'I' },
+      { position: [-6.921786,107.612022], label: 'J' },
+      { position: [-6.927207,107.603664], label: 'K' },
+      { position: [-6.931244,107.612387], label: 'L' },
+      { position: [-6.91874,107.586627], label: 'M' },
+      { position: [-6.937783,107.597077], label: 'N' },
+      { position: [-6.937219,107.602999], label: 'O' },
+      { position: [-6.937592,107.609136], label: 'P' },
+      { position: [-6.915726,107.630089], label: 'Q' },
+      { position: [-6.94543,107.593182], label: 'R' },
+      { position: [-6.917409,107.574396], label: 'S' },
+    ];
+    var markerIcon = L.icon({
+      iconUrl: 'pin.png',
+      iconSize:     [25, 25], 
+      iconAnchor:   [12, 24], 
+      popupAnchor:  [0, 0]
+    });
+    markers.forEach((marker) => {
+      L.marker(marker.position, {icon: markerIcon})
+        .bindTooltip(marker.label, { permanent: true, direction: 'left' })
+        .addTo(map);
+    });
+
+    // Membuat graf dan menambahkan node dan edge
+    graph = new Graph();
+
+    const nodes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S'];
+    nodes.forEach((node) => {
+      graph.addNode(node);
+    });
+
+    const edges = [
+      ['A','Q',3],
+      ['Q','A',3],
+      ['A','C',0.9],
+      ['C','D',0.35],
+      ['A','B',1.1],
+      ['B','A',1.1],
+      ['D','B',0.95],
+      ['G','C',1.1],
+      ['D','F',1],
+      ['F','G',1.2],
+      ['F','H',1.6],
+      ['G','H',0.5],
+      ['H','G',0.5],
+      ['H','I',0.5],
+      ['G','J',0.7],
+      ['J','I',0.85],
+      ['I','K',0.7],
+      ['K','I',0.7],
+      ['J','L',1.1],
+      ['L','J',1.1],
+      ['K','L',1.5],
+      ['O','K',1.1],
+      ['L','P',1.2],
+      ['O','P',0.7],
+      ['P','O',0.7],
+      ['O','N',0.65],
+      ['N','O',0.65],
+      ['N','R',0.9],
+      ['R','N',0.9],
+      ['P','R',3.3],
+      ['R','P',3.3],
+      ['B','E',2.3],
+      ['E','B',2.3],
+      ['E','F',1.4],
+      ['E','S',3.3],
+      ['S','E',3.3],
+      ['S','R',4.2],
+      ['R','S',4.2],
+      ['S','M',1.2],
+      ['M','S',1.2],
+      ['M','I',2],
+      ['I','M',2],
+      ['M','N',2.7],
+      ['N','M',2.7],
+      ['C','Q',2.7],
+      ['Q','C',2.7],
+      ['Q','J',2.2],
+      ['J','Q',2.2],
+      ['Q','P',4.3],
+      ['P','Q',4.3],
+    ];
+    edges.forEach((edge) => {
+      graph.addEdge(edge[0], edge[1], edge[2]);
+    });
+
+    console.log('Graf:', graph);
+
+    const sourceSelect = document.getElementById('source');
+    const destinationSelect = document.getElementById('destination');
+
+    nodes.forEach((node) => {
+      const option = document.createElement('option');
+      option.value = node;
+      option.text = node;
+      sourceSelect.appendChild(option);
+
+      const option2 = document.createElement('option');
+      option2.value = node;
+      option2.text = node;
+      destinationSelect.appendChild(option2);
+    });
+
+    function calculateShortestPath() {
+      const sourceNode = document.getElementById('source').value;
+      const destinationNode = document.getElementById('destination').value;
+      const { distances, previousNodes } = graph.dijkstra(sourceNode);
+      
+      console.log(distances, previousNodes)
+      // Menampilkan jalur terpendek pada peta
+      let currentNode = destinationNode;
+      const path = [currentNode];
+      while (previousNodes[currentNode]) {
+        path.unshift(previousNodes[currentNode]);
+        currentNode = previousNodes[currentNode];
+      }
+      console.log("total jarak yang ditempuh dari titik " + sourceNode + " ke " + destinationNode + " = " + distances[destinationNode].toFixed(2) +"km") + " dengan rute yang ditempuh sebagai berikut :";
+      console.log('Jalur terpendek:', path);
+
+      const pathCoordinates = path.map((node) => {
+        const marker = markers.find((m) => m.label === node);
+        return marker.position;
+      });
+
+      if (map) {
+        L.polyline(pathCoordinates, { color: 'red' }).addTo(map);
+      }
+      const resultContainer = document.getElementById('result');
+      resultContainer.style.display = 'block';
+      const totalDistanceElement = document.getElementById('totalDistance');
+      totalDistanceElement.textContent = "total jarak yang ditempuh dari titik " + sourceNode + " ke " + destinationNode + " = " + distances[destinationNode].toFixed(2) +"km" + " dengan rute yang ditempuh sebagai berikut :";
+      const pathElement = document.getElementById('path');
+      pathElement.textContent = path.join(' -> ');
+    }
+
+  </script>
+</body>
+</html>

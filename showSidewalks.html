@@ -1,0 +1,210 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Untitled Document</title>
+<script src="features.js"></script>
+<script src="sidewalks.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+crossorigin=""></script>
+<style>
+	html, body {
+		height: 100%;
+		margin: 0;
+		padding: 0;
+	}
+	#map {
+		height: 100%; 
+		width: 100vw; 
+	}
+	#buttons {
+		border-radius: 4px;
+		border: 2px solid #BAB3AD;
+		margin: 8px 15px;
+		background-color: #FFFFFF;
+		padding: 4px;
+	}
+</style>
+<script>
+	var map;
+	var activeSidewalks = [];
+	var activeEdges = [];
+	var activeFeatures = [];
+	var activeConnections = [];
+	
+	function initialMap()
+	{
+		map = L.map('map', {
+			center: [-7.050475855061316, 110.39239006899713],
+			zoom: 16,
+			minZoom: 10,
+			zoomControl: false
+		});
+		
+		mapView = L.tileLayer('https://api.mapbox.com/styles/v1/rizkioktav/clked2sac003x01pg7yoq53ex/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoicml6a2lva3RhdiIsImEiOiJjbGtlY3R1bnQwMmd0M3NvNXBnYjE0eHEwIn0.IoTNgaJgO9DLLyyfoqzngg', {
+			maxZoom: 20,
+			attribution: 'Imagery © <a href="https://www.mapbox.com/" target="_blank">Mapbox</a>',
+		}).addTo(map);
+		
+		map.on('click', function(e) {
+			alert("Lat, Lon : " + e.latlng.lat + ", " + e.latlng.lng)
+		});
+		
+		L.Control.Views = L.Control.extend({
+			options: {
+				position: 'topright'
+			},
+			onAdd: function() {
+				var div = L.DomUtil.create('div', 'command');
+				var divContent = "<p id='buttons'>";
+				divContent += "<input type='checkbox' id='featureBox' onclick='addFeatures();'>Features<br>";
+				divContent += "<input type='checkbox' id='sidewalkBox' onclick='addSidewalks();'>Sidewalks<br>";
+				divContent += "<input type='checkbox' id='edgesBox' onclick='addEdges();'>Edges<br>";
+				divContent += "<input type='checkbox' id='connectionBox' onclick='addConnections();'>Connections<br>";
+				
+				div.innerHTML = divContent;
+				return div;
+			}
+		});
+		L.control.views = function() { return new L.Control.Views(); };
+		
+		L.control.views().addTo(map);
+		
+		L.DomEvent.disableClickPropagation(document.getElementById("buttons"));
+	}
+	
+	function addFeatures()
+	{
+		var colors = ["#E74C3C", "#884EA0", "#3498DB", "#1ABC9C", "#117A65", "#F1C40F", "#D68910", "#D35400", "#D0D3D4", "#5D6D7E", "#212F3D", "#4A235A", "#82E0AA", "#EDBB99", "#784212", "#5D6D7E", "#F5B7B1", "#ABEBC6", "#641E16"];
+		if(document.getElementById("featureBox").checked)
+		{
+			for(var i = 0; i < features.length; i++)
+			{
+				var feature = features[i];
+			
+				var pos = {
+					lat: feature[0],
+					lng: feature[1]
+				};
+			
+				var index = feature[2].charCodeAt(0) - 97;
+				console.log(index);
+				var mcolor = colors[index];
+				//console.log(mcolor);
+				var marker = L.circleMarker([feature[0], feature[1]], {color: mcolor});
+				//var marker = L.marker([feature[0], feature[1]], {icon: L.icon({iconUrl: icons[feature[2]], iconSize: [26, 30], iconAnchor: [10, 10], popupAnchor: [-10, -20]})});
+				marker.bindPopup(" " + i);
+				marker.addTo(map);
+				
+				activeFeatures.push(marker);
+			}
+		}
+		else
+		{
+			for(var i = 0; i < activeFeatures.length; i++)
+			{
+				map.removeLayer(activeFeatures[i]);
+			}
+			activeFeatures = [];
+		}
+	}
+	
+	function addSidewalks()
+	{
+		if(document.getElementById("sidewalkBox").checked)
+		{
+			for(var i = 0; i < sidewalks.length; i++)
+			{
+				var sidewalk = sidewalks[i];
+			
+				var marker = L.circleMarker([sidewalk[0], sidewalk[1]], {radius: 8, color: '#7a00cc'});
+				marker.bindPopup(" " + i);
+				marker.addTo(map);
+				activeSidewalks.push(marker);
+			}
+		}
+		else
+		{
+			for(var i = 0; i < activeSidewalks.length; i++)
+			{
+				map.removeLayer(activeSidewalks[i]);
+			}
+			activeSidewalks = [];
+		}
+	}
+	
+	function addEdges()
+	{
+		if(document.getElementById("edgesBox").checked)
+		{
+			for(var i = 0; i < edges.length; i++)
+			{
+				var sidewalk1 = sidewalks[edges[i][0]];
+				var sidewalk2 = sidewalks[edges[i][1]];
+			
+				var newline;
+				if(edges[i][2])
+				{
+					newline = L.polyline([[sidewalk1[0], sidewalk1[1]], [sidewalk2[0], sidewalk2[1]]], {color: 'blue', interactive: false, weight: 3}).addTo(map);
+				}
+				else
+				{
+					newline = L.polyline([[sidewalk1[0], sidewalk1[1]], [sidewalk2[0], sidewalk2[1]]], {color: 'red', interactive: false, weight: 3}).addTo(map);
+				}
+				activeEdges.push(newline);
+			}
+		}
+		else
+		{
+			for(var i = 0; i < activeEdges.length; i++)
+			{
+				map.removeLayer(activeEdges[i]);
+			}
+			activeEdges = [];
+		}
+	}
+	
+	function addConnections()
+	{
+		if(document.getElementById("connectionBox").checked)
+		{
+			for(var i = 0; i < connections.length; i++)
+			{
+				var sidewalkIndex = connections[i][0];
+				var locationIndex = connections[i][1];
+			
+				var sidewalk = sidewalks[sidewalkIndex];
+				var location = features[locationIndex];
+
+				var newline;
+				if(connections[i][2])
+				{
+					newline = L.polyline([[sidewalk[0], sidewalk[1]], [location[0], location[1]]], {color: 'blue', interactive: false, weight: 3}).addTo(map);	
+				}
+				else
+				{
+					newline = L.polyline([[sidewalk[0], sidewalk[1]], [location[0], location[1]]], {color: 'red', interactive: false, weight: 3}).addTo(map);					
+				}
+				activeConnections.push(newline);
+			}
+		}
+		else
+		{
+			for(var i = 0; i < activeConnections.length; i++)
+			{
+				map.removeLayer(activeConnections[i]);
+			}
+			activeConnections = [];
+		}
+	}
+	
+</script>
+</head>
+
+<body onLoad="initialMap();">
+<div id="map"></div>
+</body>
+</html>

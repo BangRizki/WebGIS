@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>UNNES Campus Map</title>
+	<link rel="icon" href="images/logo-32x32.png">
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	
+	<script src="features.js"></script>
+	<script src="map.js"></script>
+	<script src="sidewalks.js"></script>
+	<link rel="stylesheet" type="text/css" href="assets/map.css">
+
+	<!-- <link href="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css" rel="stylesheet">
+	<script src="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js"></script> -->
+
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
+	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+
+	<script src="https://daswick.github.io/Leaflet.Sidebar/src/sidebar.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://daswick.github.io/Leaflet.Sidebar/src/sidebar.css">
+	<link rel="stylesheet" type="text/css" href="https://daswick.github.io/Leaflet.Sidebar/src/sidebar-fancy.css">
+	
+	<style>
+		body {
+			padding: 0;
+			margin: 0;
+		}
+		html, body, #map {
+			height: 100%;
+			width: 100vw;
+		}
+	</style>
+</head>
+<body onload="initMap();" id="bs-override">
+	<div class="dialog" id="confirm-location" title="Confirm Location">
+		<p autofocus>Apakah lokasi ini sudah benar?</p>
+	</div>
+	<div class="dialog" id="error-message" title="Error">
+		<p autofocus id="errorMsg"></p>
+	</div>
+	<div id="map"></div>
+	<div id="sidebar">
+
+		<!--Layer untuk list lokasi -->
+		<div id="layer-0" class="sidebar-source">
+			<div class="sidebar-header">
+				<a class='logo-container' href="http://www.unnes.ac.id" target="_blank">
+					<img class='nccu-logo' src="images/unnes-logo.png"/>
+				</a>
+			</div>
+			<div class="sidebar-content">
+				<div class="search">
+					<input type="text" id="textField" class='search-bar' placeholder="Cari..." oninput="hashText('textField', 'suggestions', 5, 'openMarker');" class="searchbar">
+					<input type="button" id="clearTextField" class="clear-search" onclick="clearSearch();" value="X"><br>
+				</div>
+				<p class='search-results' id="suggestions"></p>
+				<div id="location-list">
+					<h1>Lokasi</h1>
+				</div>
+				<div class='buttons'>
+					<button class='sidebar-button' onclick='clearList();'>Hapus histori</button>
+				</div>
+			</div>
+			<div class="sidebar-footer">
+				<div class="links">
+					<span class="fake-footer-link" onclick="sidebar.showLayer(3);">Tentang web ini ☺️</span>
+				</div>
+				&copy; 2023 RizkiCompany
+			</div>
+		</div>
+
+		<!-- Layer untuk informasi lokasi -->
+		<div id="layer-1" class="sidebar-source" parent="0">
+			<div class="sidebar-header">
+				<a class='logo-container' href="http://www.unnes.ac.id" target="_blank">
+					<img class='nccu-logo' src="images/unnes-logo.png"/>
+				</a>
+			</div>
+			<div class="sidebar-content">
+				<h2 id='location-title'></h2>
+				<div id='image-block'>
+				</div>
+				<div id='location-content'>
+				</div>
+				<div class='buttons'>
+					<!-- <button class='sidebar-button' id='share-location'>Share <img src='images/getLink.svg'/></button> -->
+					<button class='sidebar-button' id='directions-button'>Cari rute <img src='images/direction.svg'/></button>
+				</div>
+			</div>
+			<div class="sidebar-footer">
+				<div class="sidebar-footer">
+					<div class="links">
+						<span class="fake-footer-link" onclick="sidebar.showLayer(3);">Tentang web ini ☺️</span>
+					</div>
+					&copy; 2023 RizkiCompany
+				</div>
+			</div>
+		</div>
+
+		<!-- Layer untuk mencari rute -->
+		<div id="layer-2" class="sidebar-source" parent="1">
+			<div class="sidebar-header">
+				<a class='logo-container' href="http://www.unnes.ac.id" target="_blank">
+					<img class='nccu-logo' src="images/unnes-logo.png"/>
+				</a>
+			</div>
+			<div class="sidebar-content">
+				<div class='direction-header'>
+					<h2>Cari rute</h2>
+					<p id='direction-title'></p>
+				</div>
+				<div class='direction-options'>
+					<p>Pilih lokasi awal:</p>
+					<div id='direction-location' class='direction-option'><input id="location-option" type='radio' name='direction-image'><img class='direction-image' src='images/locate.svg'/>Pilih dari lokasi anda saat ini</div>
+					<div id='direction-building' class='direction-option'><input id="building-option" type='radio' name='direction-image'><img class='direction-image' src='images/inside-ico.svg'/><input placeholder='Nama lokasi/gedung' id="locationBox" class='direction-search' oninput="hashText('locationBox', 'locations', 3, 'findBuilding');" type='text'/></div>
+					<p class="search-results" id="locations"></p>
+					<div class='direction-option'><input id="accessBox" type='checkbox'/><p style='margin-left: 10px'>Gunakan akses dengan kendaraan?</p></div>
+				</div>
+				<div class='buttons'>
+					<button class='sidebar-button' id='direction-button'>Rute <img src='images/start-ico.svg'/></button>
+				</div>
+				<div class='directions-distance'>
+					<h3 style="text-align: center;" id='directions-distance'></h3>
+				</div>
+				<div id='directions-info'>
+				</div>
+			</div>
+			<div class="sidebar-footer">
+				&copy; 2023 RizkiCompany
+			</div>
+		</div>
+
+		<!-- About the Map layer -->
+		<div id="layer-3" class="sidebar-source" parent="1">
+			<div class="sidebar-header">
+				<a class='logo-container' href="http://www.unnes.ac.id" target="_blank">
+					<img class='unnes-logo' src="images/unnes-logo.png"/>
+				</a>
+			</div>
+			<div class="sidebar-content">
+				<p class="about-header">belum ada</p>
+				<p class="about-content"></p>
+			</div>
+			<div class="sidebar-footer">
+				&copy; 2023 RizkiCompany
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,599 @@
+/* --------------- General Map --------------- */
+
+.options-container {
+	background: white;
+	border: 1px solid #bab3ad;
+	border-bottom: 1px solid #bab3ad;
+	margin-right: 20px !important;
+	margin-top: 20px !important;
+	box-shadow: 2px 2px gray;
+}
+/* Formats map control buttons (e.g. location) */
+.map-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #fff;
+	cursor: pointer;
+	padding: 6px;
+	border: 0;
+	border-bottom: 1px solid #bab3ad;
+	width: 100%;
+}
+/* Sizes images used in control buttons */
+.map-button-img {
+	height: 25px;
+	width: 25px;
+}
+
+
+/* --------------- Search Bars --------------- */
+
+/* Allows input and clear button to be beside each other */
+.search {
+	width: 100%;
+	display: flex;
+	flex-wrap: nowrap;
+}
+/* Styles the input search bar */ 
+.search-bar {
+	width: 88%;
+	border-radius: 5px 0 0 5px;
+	padding: 7px 12px;
+	margin: 1.25em 0 .25em 0;
+	font-size: 16px;
+	display: inline-block;
+	border: 1px solid #ccc;
+	border-right: none;
+	box-sizing: border-box;
+}
+/* Removes clear 'x' in Microsoft browsers */
+.search-bar::-ms-clear {
+	display: none;	
+}
+/* Styles the block for the search results */
+.search-results {
+	margin-top: -.35em;
+	font-size: 16px;
+	background-color: white;
+	border: 1px solid #ccc !important;
+	border-bottom: none !important;
+}
+/* Styles the button for clearing the search */
+.clear-search {
+	border-radius: 0 5px 5px 0;
+	margin: 1.25em 0 .25em 0;
+	display: inline-block;
+	font-size: 16px;
+	border: 1px solid #ccc;
+	box-sizing: border-box;
+	width: 12%;
+}
+/* Dims background on hover */
+.clear-search:hover {
+	background: #a2aaad;
+	cursor: pointer;
+}
+/* Styles each individual search result */
+.search-result {
+	display: block;
+	font-size: 16px;
+	text-decoration: none;
+	border-bottom: 1px solid #ccc;
+	padding: .25em .8em;
+}
+/* Adds the hover effect on the individual search result */
+.search-result:hover {
+	background-color: #E8E8E8;
+	color: black;
+	cursor: pointer;
+}
+/* Removes border when results is empty */
+.search-results:empty {
+	border: none !important;
+}
+
+
+/* --------------- Misc. Sidebar --------------- */
+
+/* Background color for sidebar header */
+.sidebar-header {
+	background-color: #862633;
+}
+/* Font size for sidebar footer */
+.sidebar-footer {
+	font-size: 16px;
+}
+/* Background color of back button container */
+.sidebar-back {
+	background: #e0e0e0;
+}
+/* Styles the back button across layers */
+.back-button {
+	background: #fff;
+	border: 1px solid #BAB3AD;
+	padding: .5em 1.25em;
+	cursor: pointer;
+}
+/* Allows for custom checkbox styling */
+input[type="checkbox"] {
+	display: none;
+	margin: 0;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	width: 25px;
+	height: 25px;
+	display: flex;
+	justify-content: center;
+	border: 2px solid #5b6770;
+}
+/* Dims checkbox background for hover effect */
+input[type="checkbox"]:hover {
+	background: #CCD1D1;
+	cursor: pointer;
+	transition: .2s;
+}
+/* Sets background color for checkbox */
+input[type="checkbox"]:checked {
+	background-color: #5b6770;
+	transition: .2s;
+}
+/* Adds checkmark to checkbox */
+input[type="checkbox"]:checked:before {
+	color: #ffffff;
+	font-size: 16px;
+	content: '\002714';
+	font-weight: bold;
+}
+/* Lightens checkbox background for hover effect */
+input[type="checkbox"]:checked:hover {
+	background-color: #000000;	
+	transition: .2s;
+}
+/* Allows for custom radio button styling */
+input[type="radio"] {
+	display: none;
+	margin: 0;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	width: 25px;
+	height: 25px;
+	display: flex;
+	justify-content: center;
+	border-radius: 50%;
+	border: 2px solid #5b6770;
+}
+/* Dims radio button background for hover effect */
+input[type="radio"]:hover {
+	background: #CCD1D1;
+	cursor: pointer;
+	transition: .2s;
+}
+/* Sets background color for radio button */
+input[type="radio"]:checked {
+	background-color: #5b6770;
+	transition: .2s;
+}
+/* Adds checkmark to radio button */
+input[type="radio"]:checked:before {
+	color: #ffffff;
+	font-size: 16px;
+	content: '\002714';
+	font-weight: bold;
+}
+/* Lightens checkbox background for hover effect */
+input[type="radio"]:checked:hover {
+	background-color: #000000;	
+	transition: .2s;	
+}
+/* Centers buttons at the bottom of layer */
+.buttons {
+	display: flex;
+	justify-content: center;
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+/* Gives a little extra space to the right for the first button */
+.buttons .sidebar-button:first-child {
+	margin-right: 1em;
+}
+/* Styles the blue sidebar buttons */
+.sidebar-button {
+	border: none;
+	background-color: #2E86C1;
+	color: #fff;
+	font-size: 1.5em;
+	border-radius: 4px;
+	font-weight: bold;
+	padding: .5em 1em;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+}
+/* Formats any image in the blue buttons */
+.sidebar-button img {
+	width: 25px;
+	height: 25px;
+	margin-left: 10px;
+}
+/* Sets background color of blue button */
+.sidebar-button:hover {
+	background-color: #1F618D;
+}
+/* Sizes the logo container in header */
+.logo-container {
+	margin: 15px;
+	height: 65%;
+}
+/* Sizes the logo image in header */
+.nccu-logo {
+	height: 100%;
+	width: auto;
+}
+/* Creates fake link */
+.fake-footer-link {
+	color: rgb(0, 112, 192);
+	cursor: pointer;
+	text-decoration: underline;
+}
+/* Styles footer links to match fake link */
+html a {
+	color: rgb(0, 112, 192)
+}
+
+
+/* --------------- List Sidebar layer --------------- */
+
+/* Formats location genre */
+.section {
+	cursor: pointer; 
+	margin: 0;
+	width: 100%;
+	margin-bottom: 5px;
+}
+/* Sizes location genre image */
+.section-image {
+	height: 30px;
+	width: 30px;
+	margin-right: 10px;
+}
+/* Formats location genre title (e.g. dorm) */
+.section-title p {
+	font-size: 16px;
+	display: flex;
+	align-items: center;
+	font-weight: bold;
+	color: rgb(50, 50, 50);
+}
+/* Adds underline to genre title */
+.section-title:hover p:hover {
+	text-decoration: underline;
+}
+/* Formats genre title row with checkbox */
+.section-header {
+	padding: 0 .5em;
+	margin: 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border: 1px solid silver;
+	padding-left: 10px;
+	padding-right: 10px;
+	transition: .2s;
+}
+/* Styling for individual location in genre */
+.section-location {
+	padding: .5em;
+	padding-left: 1em;
+	font-size: 14px;
+	border: 1px solid #a2aaad;
+	border-top: none;
+	transition: .2s;
+}
+/* Adds underline to individual location */
+.section-location:hover {
+	text-decoration: underline;
+}
+/* Dims background for hover effect on individual location */
+.section-header:hover, .section-location:hover {
+	background-color: #CCD1D1;
+}
+/* Don't display genre list (on default) */
+.section-list {
+	display: none;
+}
+/* Positioning for genre checkbox */
+.section-check {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+
+/* --------------- Location Sidebar --------------- */
+
+/* Sizing for information icon */
+.detail-image {
+	width: 25px;
+	height: 25px;
+	margin-right: 8px;
+}
+/* Formatting for information about building */
+.location-detail {
+	display: flex;
+	align-items: center;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+/* Sizing for name of building */
+#location-title {
+	font-size: 22px;
+}
+/* Sizing for image of building */
+#location-image {
+	width: 100%;
+	height: auto;
+	border: 2px solid dimgray;
+	margin-bottom: 2em;
+}
+/* Sizing for information on building */
+#location-content {
+	font-size: 16px;
+}
+/* Remove underline (for aesthetic purposes) */
+#location-content a {
+	text-decoration: none;
+}
+
+
+/* --------------- Directions Sidebar layer --------------- */
+
+/* Sizing and positioning for icons for direction options */
+.direction-image {
+	height: 25px;
+	width: 25px;
+	min-width: 25px;
+	min-height: 25px;
+	margin-left: 5px;
+	margin-right: 10px;
+}
+/* Sizing for starting point options */
+.direction-options {
+	font-size: 18px;
+}
+/* Formatting for individual starting point option */
+.direction-option {
+	display: flex;
+	align-items: center;
+	margin-bottom: 15px;
+}
+/* Sizing for length of route */
+#directions-time {
+	text-align: center;
+	font-size: 16px;
+}
+/* Formatting for location search bar */
+.direction-search {
+	width: 80%;
+	border-radius: 5px;
+	padding: 7px 12px;
+	font-size: 16px;
+	border: 1px solid #ccc;
+	box-sizing: border-box;
+}
+/* Creates custom box for directions */
+#directions-info {
+	margin-top: 20px;
+	max-height: 30vh;
+	font-size: 16px;
+	overflow: auto;
+}
+/* Sizes title of directions layer */
+#direction-title {
+	font-size: 22px;
+}
+/* Adds border around directions */
+.directions-open {
+	border: 1px solid black;
+}
+/* Adds border padding for top entry */
+.top-direction-row {
+	border-top: 1px solid black;
+}
+/* Sizes directions table */
+.direction-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-left: 0;
+	padding-left: 0;
+}
+/* Sizes and borders each directions row */
+.direction-row {
+	padding: 10px;
+	padding-right: 15px;
+	padding-left: 15px;
+	text-align: center;
+	background-color: gainsboro;
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+}
+/* Formats individual table index */
+td {
+	padding: 5px;
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+}
+
+
+/* --------------- Share Sidebar layer --------------- */
+
+/* Styles header/title for sharing map */
+#link-title {
+	font-size: 22px;
+}
+/* Styles text area for copying URL */
+.copy-url {
+	width: 95%;
+	font-size: 14px;
+	height: 6vh;
+	padding: 5px;
+	resize: none;
+}
+/* Styles text area for copying embed code */
+.copy-map {
+	width: 95%;
+	font-size: 14px;
+	height: 10vh;
+	padding: 5px;
+	resize: none;
+}
+/* Sets font size of sharing map text */
+.link-content {
+	font-size: 16px;
+}
+/* Sizes and formats copy to clipboard buttons */
+.copy-button {
+	margin-top: 10px;
+	width: 100%;
+	margin-bottom: 30px;
+	font-size: 14px;
+	background: #A2AAAD;
+	border: 1px solid #5B6770;
+	padding: .5em 1.25em;
+	cursor: pointer;
+}
+
+
+/* --------------- About Sidebar layer --------------- */
+
+/* Styles "header" for the about map page */
+.about-header {
+	color: #404040;
+	font-size: 16px;
+}
+/* Styles content for the about map page */
+.about-content {
+	font-size: 14px;
+}
+
+
+/* --------------- jQuery popup --------------- */
+
+/* Ensures dialog is in front of map/modal */
+.ui-dialog {
+	z-index: 10000 !important;
+}
+/* Styles header bar of dialog */
+.ui-dialog .ui-dialog-titlebar {
+	background-color: #862633;
+	color: #fff;
+	font-size: 1.1em;
+}
+/* Positions dialog buttons */
+.ui-dialog .ui-dialog-buttonpane button {
+	margin: .5em 1em .5em 0;
+}
+/* Positions dialog text */
+.ui-dialog .ui-dialog-content {
+	padding: 1em;
+}
+/* Positions pane for dialog buttons */
+.ui-dialog .ui-dialog-buttonpane {
+	padding: .5em 1em .5em .4em;
+}
+/* Positions dialog buttons */
+.ui-dialog-buttonset button {
+	padding: .4em 1.3em;
+}
+/* Ensures dialog source text is not displayed */
+.dialog {
+	display: none;
+}
+/* Ensures close button is gone (to prevent unwanted behavior) */
+.no-close .ui-dialog-titlebar-close {
+	display: none;
+}
+
+/* --------------- sidebar leaflet --------------- */
+
+.sidebar-source {
+	display: none;
+}
+.leaflet-sidebar {
+	width: 400px;
+	display: flex;
+}
+.sidebar-layer {
+	background: white;
+	border: 2px solid #BAB3AD;
+	border-radius: 6px;
+	width: 95%;
+}
+.sidebar-header {
+	overflow: hidden;
+}
+.sidebar-body {
+	overflow: auto;
+}
+.sidebar-content {
+	overflow: hidden;
+}
+.sidebar-footer {
+	bottom: 0;
+	right: 0;
+	left: 0;
+	border-radius: 0 0 4px 4px;
+	overflow: hidden;
+}
+.close-button {
+	margin: 0.5cm -2px 0 -2px;
+	border: 2px solid #BAB3AD;
+	height: 4em;
+	font-size: 14px;
+	color: dimgray;
+	background: white;
+}
+.close-button:hover {
+	cursor: pointer;
+}
+.sidebar-transition {
+    -webkit-transition: all 0.5s ease-in-out;
+    -moz-transition: all 0.5s ease-in-out;
+    -ms-transition: all 0.5s ease-in-out;
+    -o-transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out;	
+}
+.sidebar-header {
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+.sidebar-back {
+	padding: 0.5em 2em 0.5em 2em;
+}
+.sidebar-content {
+	padding: 0 2em 0 2em;
+}
+.sidebar-footer {
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+.leaflet-control-attribution-right {
+	right: 375px;
+	transition: right 0.5s ease-in-out;
+}
+.leaflet-control-attribution-right-closed {
+	right: 0;
+}
+@media only screen and (max-width: 500px) {
+	.leaflet-sidebar {
+		width: 95vw;	
+	}
+	.close-button {
+		font-size: 16px;
+	}
+}

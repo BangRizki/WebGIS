@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<style>
+    .dialog-source {
+			display: position;
+		}
+		.ui-dialog {
+			z-index: 1000 !important;
+			background: gainsboro;
+			border: 2px solid black !important;
+		}
+		.ui-dialog-titlebar {
+			background: silver;
+		}
+		.ui-dialog-buttonpane {
+			background: gainsboro;
+		}
+		.shortenedText {
+			width: 60%;
+		} 
+</style>
+<div class="dialog-source" id="add-sidewalk" title="Tambah indeks">
+    <p>Latitude: <input class="shortenedText" oninput="updateNewSidewalk();" id="add-sidewalk-lat" type="text" /> </p>
+    <p>Longitude: <input class="shortenedText" oninput="updateNewSidewalk();" id="add-sidewalk-lng" type="text" /> </p>
+</div>
+</body>
+<script>
+
+</script>
+</html>

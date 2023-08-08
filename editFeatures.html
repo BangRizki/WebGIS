@@ -1,0 +1,418 @@
+<html>
+	<head>
+		<title>Edit Features</title>
+		<script src="features.js"></script>
+		<script>
+			var details;
+			
+			function disableModal()
+			{
+				document.getElementById("myModal").style.display = "none";
+			}
+			
+			function populateList()
+			{
+				var types = new Set();
+				details = new Set();
+				
+				document.getElementById("list").innerHTML = "";
+				
+				for(var i = 0; i < features.length; i++)
+				{
+					var entryName = features[i][3];
+					if(features[i][2] === "hidden")
+					{
+						entryName += " (hidden)";
+					}
+					
+					types.add(features[i][2]);
+					
+					var entryID = "location" + i.toString();
+					
+					var listEntry = "<div id='" + entryID + "' class='listEntry' ondblclick='populateLocation(" + i + ");'>" + entryName + "</div>";
+					document.getElementById("list").innerHTML += listEntry;
+					
+					if(features[i].length > 4)
+					{
+						for(var j = 0; j < features[i][4].length; j++)
+						{
+							details.add(features[i][4][j][0]);
+						}
+					}
+				}
+				
+				types.add("hidden");
+				
+				document.getElementById("locationTypes").innerHTML += "<option>Pilih tipe</option>";
+				types.forEach(function(type) {
+					document.getElementById("locationTypes").innerHTML += "<option>" + type + "</option>";
+				});
+				
+				document.getElementById("locationDetails").innerHTML += "<option>Masukan detail</option>";
+				details.forEach(function(detail) {
+					document.getElementById("locationDetails").innerHTML += "<option>" + detail + "</option>";
+					document.getElementById("detailList").innerHTML += "<div id='detail" + detail + "'></div>";
+				});
+			}
+			
+			function populateDetail()
+			{
+				var dropdown = document.getElementById("locationDetails");
+				var index = dropdown.options.selectedIndex;
+				var detail = dropdown.options[index].text;
+
+				var detailsList = document.getElementById("detailList");
+				
+				for(var i = 0; i < detailsList.children.length; i++)
+				{
+					document.getElementById(detailsList.children[i].id).style.display = "none";
+				}
+				
+				if(index === 0)
+				{
+					return;
+				}
+				
+				var detailID = "detail" + dropdown.options[index].text;
+				
+				document.getElementById(detailID).style.display = "block";
+			}
+			
+			function deleteRow(detailID, index)
+			{
+				var detailEntry = document.getElementById(detailID).children[0];
+				
+				for(var i = index; i < detailEntry.children.length - 1; i++)
+				{
+					var currentEntry = detailEntry.children[i];
+					var nextEntry = detailEntry.children[i + 1];
+					
+					currentEntry.children[0].value = nextEntry.children[0].value;
+				}
+				
+				detailEntry.children[detailEntry.children.length - 2].remove();
+			}
+			
+			function addEntryRow(detailID)
+			{
+				var thisDetail = document.getElementById(detailID).children[0];
+				
+				var newIndex = thisDetail.children.length - 1;
+				
+				var newRow = document.createElement('div');
+				newRow.className = "detailText";
+				newRow.innerHTML = (newIndex + 1) + ": <input class='detailTextBox' type='text'/><button class='clearEntry' onclick='deleteRow(\"" + detailID + "\", " + newIndex + ");'>X</button>";
+
+				thisDetail.insertBefore(newRow, thisDetail.children[newIndex]);
+			}
+			
+			function populateLocation(index)
+			{
+				disableModal();
+				
+				var feature = features[index];
+				
+				document.getElementById("locationIndex").value = index;
+				document.getElementById("nameText").value = feature[3];
+				document.getElementById("latText").value = feature[0];
+				document.getElementById("lngText").value = feature[1];
+				
+				document.getElementById("locationDetails").options.selectedIndex = 0;
+				
+				var dropdown = document.getElementById("locationTypes");
+				for(var i = 0; i < dropdown.options.length; i++)
+				{
+					if(dropdown[i].value === feature[2])
+					{
+						dropdown.options.selectedIndex = i;
+						break;
+					}
+				}
+				
+				details.forEach(function(detail) {
+					var detailID = "detail" + detail;
+					document.getElementById(detailID).innerHTML = "";
+					document.getElementById(detailID).style.display = "none";
+					
+					var addRow = "<div class='addEntry'>Add new entry?<button onclick='addEntryRow(\"" + detailID + "\");'>Add Row</button></div>";
+					
+					var detailText = "<div class='detailEntry'>";
+					
+					if(feature.length > 4)
+					{
+						for(var j = 0; j < feature[4].length; j++)
+						{
+							if(feature[4][j][0] === detail)
+							{
+								for(var k = 1; k < feature[4][j].length; k++)
+								{
+									detailText += "<div class='detailText'>" + k.toString() + ": " + "<input class='detailTextBox' type='text' value=\"" + feature[4][j][k] + "\"\><button class='clearEntry' onclick='deleteRow(\"" + detailID + "\", " + (k-1) + ");'>X</button></div>";
+								}
+								break;
+							}
+
+						}
+					}
+					
+					detailText += addRow + "</div>";
+					document.getElementById(detailID).innerHTML = detailText;
+				});
+			}
+			
+			function clearLocation()
+			{
+				document.getElementById("nameText").value = "";
+				document.getElementById("latText").value = "";
+				document.getElementById("lngText").value = "";
+				document.getElementById("locationTypes").options.selectedIndex = 0;
+				document.getElementById("locationDetails").options.selectedIndex = 0;
+				
+				details.forEach(function(detail) {
+					var detailID = "detail" + detail;
+					document.getElementById(detailID).innerHTML = "";
+					document.getElementById(detailID).style.display = "none";
+				});
+			}
+			
+			function addLocation()
+			{
+				disableModal();
+				document.getElementById("locationIndex").value = features.length;
+				clearLocation();
+				
+				details.forEach(function(detail) {
+					var detailID = "detail" + detail;
+					document.getElementById(detailID).innerHTML = "";
+					document.getElementById(detailID).style.display = "none";
+					
+					var addRow = "<div class='addEntry'>Add new entry?<button onclick='addEntryRow(\"" + detailID + "\");'>Add Row</button></div>";
+					
+					var detailText = "<div class='detailEntry'>" + addRow + "</div>";
+					
+					document.getElementById(detailID).innerHTML = detailText;
+				});
+
+			}
+			
+			function saveLocation()
+			{
+				var entryIndex = document.getElementById("locationIndex").value;
+				var entryID = "location" + entryIndex;
+				
+				var updatedName = document.getElementById("nameText").value;
+				var updatedLat = document.getElementById("latText").value;
+				var updatedLng = document.getElementById("lngText").value;
+				
+				if(updatedName.length < 3 || updatedLat.length < 3 || updatedLng.length < 3)
+				{
+					return;
+				}
+				
+				var updatedTypeBox = document.getElementById("locationTypes");
+				
+				if(updatedTypeBox.options.selectedIndex === 0)
+				{
+					return;
+				}
+				
+				var updatedType = updatedTypeBox.options[updatedTypeBox.options.selectedIndex].text;
+				
+				var updatedEntry = [Number(updatedLat), Number(updatedLng), updatedType, updatedName, []];
+				
+				details.forEach(function(detail) {
+					var detailID = "detail" + detail;
+					
+					var thisDetail = document.getElementById(detailID);
+				
+					var entryDetail = [detail];
+					
+					for(var i = 0; i < thisDetail.children[0].children.length; i++)
+					{
+						var detailChild = thisDetail.children[0].children[i];
+					
+						if(detailChild.classList.contains("addEntry"))
+						{
+							continue;
+						}
+						
+						var detailText = detailChild.children[0].value;
+						
+						entryDetail.push(detailText);
+					}
+					
+					if(entryDetail.length > 1)
+					{
+						updatedEntry[4].push(entryDetail);
+					}
+				});
+				
+				if(updatedEntry[4].length === 0)
+				{
+					updatedEntry.pop();
+				}
+				
+				console.log(updatedEntry);
+				
+				if(!document.contains(document.getElementById(entryID)))
+				{
+					var listEntry = "<div id='" + entryID + "' class='listEntry' ondblclick='populateLocation(" + document.getElementById("locationIndex").value + ");'>" + updatedName + "</div>";
+					document.getElementById("list").innerHTML += listEntry;
+					features.push(updatedEntry);
+				}
+				
+				features[parseInt(entryIndex)] = updatedEntry;
+				document.getElementById(entryID).innerHTML = updatedName;
+			}
+			
+			function download() 
+			{
+				var filename = "features.js";
+				
+				var text = "var features = [\n";
+				for(var i = 0; i < features.length; i++)
+				{
+					text += "\t" + JSON.stringify(features[i]) + ",\n";
+				}
+				text += "];";
+				
+				var element = document.createElement('a');
+				element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+				element.setAttribute('download', filename);
+
+				element.style.display = 'none';
+				document.body.appendChild(element);
+
+				element.click();
+
+				document.body.removeChild(element);
+			}
+		</script>
+		<style>
+			body {
+				margin: 0;
+			}
+			.headerContainer {
+				height: 9%;
+				font-size: 16px;
+				text-align: center;
+				margin-bottom: 20px;
+			}
+			.bodyContainer {
+				display: flex;
+				width: 100%;
+				justify-content: center;
+				height: 79%;
+			}
+			.locationlist {
+				background: white;
+				width: 30%;
+				overflow: auto;
+			}
+			.listEntry {
+				font-size: 18px;
+				padding: 3px;
+			}
+			.listEntry:hover {
+				background: lightgray;
+			}
+			.locationEdit {
+				background: white;
+				margin-left: 20px;
+				width: 30%;
+			}
+			.locationDetail {
+				display: flex;
+				margin-bottom: 15px;
+			}
+			.buttonsContainer {
+				height: 9%;
+				display: flex;
+				justify-content: center;
+			}
+			.myButton {
+				height: 60%;
+				padding: 8px;
+				margin-right: 20px;
+				font-size: 16px;
+			}
+			.listModal {
+				z-index: 100;
+				width: 40%;
+				padding-top: 100px;
+				text-align: center;
+				height: 69%;
+				display: block;
+				position: fixed;
+				overflow: hidden;
+				font-size: 36px;
+				color: white;
+				background-color: rgba(0,0,0,0.5);
+			}
+			.detailTextBox {
+				padding: 3px;
+				width: 75%;
+			}
+			.detailText {
+				margin-bottom: 10px;
+			}
+			.addEntry {
+				margin-bottom: 10px;
+			}
+			.clearEntry {
+				width: 7%;
+				padding: 3px;
+			}
+		</style>
+	</head>
+	<body onload="populateList();">
+		<div class="headerContainer">
+			<h1>Page tambah lokasi</h1>
+		</div>
+		<div class="bodyContainer">
+			<div class="locationList">
+				<div id="list">
+				</div>
+			</div>
+			<div class="locationEdit">
+				<div id="myModal" class="listModal">
+					Pilih lokasi atau buat lokasi terlebih dahulu !
+				</div>
+				<input type="hidden" id="locationIndex"/>
+				<div for="list" class="locationDetail">
+					<p>Nama lokasi: 
+					</p>
+					<input id="nameText" type='text'/>
+				</div>
+				<div class="locationDetail">
+					<p>Latitude: 
+					</p>
+					<input id="latText" type='text'/>
+				</div>
+				<div class="locationDetail">
+					<p>Longitude:
+					</p>
+					<input id="lngText" type='text'/>					
+				</div>
+				<div class="locationDetail">
+					<p>Tipe:
+					</p>
+					<select id="locationTypes">
+						<option value=""></option>
+					</select>
+				</div>
+				<div class="locationDetail">
+					<p>Detail:
+					</p>
+					<input id="locationDetails" onchange="populateDetail();"></input>
+				</div>
+				<div id="detailList">
+				</div>
+				<button type="submit" onclick="saveLocation();">Simpan Lokasi</button>
+			</div>
+		</div>
+		<div class="buttonsContainer">
+			<button class="myButton" onclick="addLocation();">Tambah Lokasi</button>
+			<button class="myButton" onclick="download();">Simpan File</button>
+		</div>
+	</body>
+</html>
